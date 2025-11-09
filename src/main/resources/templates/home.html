@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Currency Converter</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .header h2 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Converter Card */
+        .converter-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 24px;
+            color: #333;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-arrow {
+            font-size: 20px;
+            color: #667eea;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .currency-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            cursor: text;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .currency-group {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .swap-btn {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0;
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .btn-convert {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-convert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* History Table */
+        .history-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            grid-column: 1 / -1;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .currency-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #667eea15;
+            color: #667eea;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .amount-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Quick Stats */
+        .stats-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .currency-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .swap-btn {
+                transform: rotate(90deg);
+                justify-self: center;
+            }
+
+            .swap-btn:hover {
+                transform: rotate(270deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo-icon">💱</div>
+            <h2>Currency Converter</h2>
+        </div>
+        <div class="user-section">
+            <a th:href="@{/logout}" class="btn-logout">🚪 Sair</a>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+        <!-- Converter Card -->
+        <div class="converter-card">
+            <h3 class="card-title">
+                <span class="card-icon">💰</span>
+                Conversor de Moedas
+            </h3>
+
+            <div th:if="${error}" class="alert alert-error">
+                <p th:text="${error}"></p>
+            </div>
+
+            <div th:if="${result}" class="result-box">
+                <div class="result-label">Resultado da Conversão</div>
+                <div class="result-value">
+                    <span th:text="${#numbers.formatDecimal(result.amount, 1, 2)} + ' ' + ${result.sourceCurrency}"></span>
+                    <span class="result-arrow">→</span>
+                    <span th:text="${#numbers.formatDecimal(result.convertedAmount, 1, 2)} + ' ' + ${result.targetCurrency}"></span>
+                </div>
+            </div>
+
+            <form th:action="@{/convert}" method="post">
+                <div class="currency-group">
+                    <div class="form-group">
+                        <label for="sourceCurrency">Moeda de Origem</label>
+                        <div class="input-wrapper">
+                            <span class="currency-icon">🌍</span>
+                            <select id="sourceCurrency" name="sourceCurrency">
+                                <option value="USD">USD - Dólar Americano</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="BRL" selected>BRL - Real Brasileiro</option>
+                                <option value="GBP">GBP - Libra Esterlina</option>
+                                <option value="JPY">JPY - Iene Japonês</option>
+                                <option value="CAD">CAD - Dólar Canadense</option>
+                                <option value="AUD">AUD - Dólar Australiano</option>
+                                <option value="CHF">CHF - Franco Suíço</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="swap-btn" onclick="swapCurrencies()">⇄</button>
+
+                    <div class="form-group">
+                        <label for="targetCurrency">Moeda de Destino</label>
+                        <div class="input-wrapper">
+                            <span class="currency-icon">🎯</span>
+                            <select id="targetCurrency" name="targetCurrency">
+                                <option value="USD" selected>USD - Dólar Americano</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="BRL">BRL - Real Brasileiro</option>
+                                <option value="GBP">GBP - Libra Esterlina</option>
+                                <option value="JPY">JPY - Iene Japonês</option>
+                                <option value="CAD">CAD - Dólar Canadense</option>
+                                <option value="AUD">AUD - Dólar Australiano</option>
+                                <option value="CHF">CHF - Franco Suíço</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Valor a Converter</label>
+                    <div class="input-wrapper">
+                        <span class="currency-icon">💵</span>
+                        <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-convert">🔄 Converter Agora</button>
+            </form>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-card">
+            <h3 class="card-title">
+                <span class="card-icon">📊</span>
+                Estatísticas Rápidas
+            </h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${#lists.size(history)}">0</div>
+                    <div class="stat-label">Conversões</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Moedas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Recentes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="history-card">
+        <h3 class="card-title">
+            <span class="card-icon">📜</span>
+            Histórico de Conversões (Últimas 10)
+        </h3>
+        <div class="table-wrapper">
+            <table th:if="${not #lists.isEmpty(history)}">
+                <thead>
+                <tr>
+                    <th>📅 Data e Hora</th>
+                    <th>🌍 Origem</th>
+                    <th>🎯 Destino</th>
+                    <th>💰 Valor</th>
+                    <th>✅ Resultado</th>
+                    <th>📈 Taxa</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${history}">
+                    <td th:text="${#temporals.format(entry.conversionDate, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td><span class="currency-badge" th:text="${entry.sourceCurrency}"></span></td>
+                    <td><span class="currency-badge" th:text="${entry.targetCurrency}"></span></td>
+                    <td class="amount-value" th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}"></td>
+                    <td class="amount-value" th:text="${#numbers.formatDecimal(entry.convertedAmount, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(entry.exchangeRate, 1, 4)}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(history)}" class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>Nenhuma conversão realizada ainda</p>
+                <p style="font-size: 12px; margin-top: 5px;">Faça sua primeira conversão acima!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function swapCurrencies() {
+        const source = document.getElementById('sourceCurrency');
+        const target = document.getElementById('targetCurrency');
+        const temp = source.value;
+        source.value = target.value;
+        target.value = temp;
+    }
+</script>
+</body>
+</html>

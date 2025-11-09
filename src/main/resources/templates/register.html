@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Currency Converter</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 480px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease-in;
+            background-color: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"] {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        input[type="date"] {
+            color: #666;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .error-message {
+            color: #c33;
+            font-size: 13px;
+            margin-top: 6px;
+            display: block;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .input-error {
+            border-color: #c33 !important;
+            background-color: #fff5f5 !important;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .password-requirements {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .password-requirements ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+        }
+
+        .password-requirements li {
+            margin: 4px 0;
+        }
+
+        .form-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .progress-step {
+            width: 30%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 30px 25px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .form-progress {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <div class="logo">
+        <div class="logo-icon">💱</div>
+        <h2>Criar Conta</h2>
+        <p class="subtitle">Preencha os dados para começar</p>
+    </div>
+
+    <div class="form-progress">
+        <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
+        <div class="progress-step active"></div>
+    </div>
+
+    <div th:if="${error}" class="alert">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:object="${user}" th:action="@{/register}" method="post">
+        <div class="form-group">
+            <label for="name">Nome Completo</label>
+            <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input
+                        type="text"
+                        id="name"
+                        th:field="*{name}"
+                        th:class="${#fields.hasErrors('name')} ? 'input-error' : ''"
+                        placeholder="Digite seu nome completo"
+                        autofocus>
+            </div>
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+                <span class="input-icon">📧</span>
+                <input
+                        type="email"
+                        id="email"
+                        th:field="*{email}"
+                        th:class="${#fields.hasErrors('email')} ? 'input-error' : ''"
+                        placeholder="seu@email.com">
+            </div>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <div class="input-wrapper">
+                <span class="input-icon">🔒</span>
+                <input
+                        type="password"
+                        id="password"
+                        th:field="*{password}"
+                        th:class="${#fields.hasErrors('password')} ? 'input-error' : ''"
+                        placeholder="Crie uma senha segura">
+            </div>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+            <div class="password-requirements" th:unless="${#fields.hasErrors('password')}">
+                <strong>Sua senha deve conter:</strong>
+                <ul>
+                    <li>Mínimo de 8 caracteres</li>
+                    <li>Letras maiúsculas e minúsculas</li>
+                    <li>Pelo menos um número</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="birthDate">Data de Nascimento</label>
+            <div class="input-wrapper">
+                <span class="input-icon">📅</span>
+                <input
+                        type="date"
+                        id="birthDate"
+                        th:field="*{birthDate}"
+                        th:class="${#fields.hasErrors('birthDate')} ? 'input-error' : ''">
+            </div>
+            <span th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" class="error-message"></span>
+        </div>
+
+        <button type="submit" class="btn-submit">Criar Conta</button>
+    </form>
+
+    <div class="divider">
+        <span>ou</span>
+    </div>
+
+    <div class="login-link">
+        <p>Já tem uma conta? <a th:href="@{/login}">Fazer login</a></p>
+    </div>
+</div>
+</body>
+</html>
